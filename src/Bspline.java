@@ -21,8 +21,6 @@ public class Bspline extends JPanel {
     double N[][];
     Color col[];
 
-    int x, y, x2, y2;
-
     public static void main(String[] args) {
         JFrame f = new JFrame("Draw Bspline");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,8 +30,6 @@ public class Bspline extends JPanel {
     }
 
     Bspline() {
-        x = y = x2 = y2 = 0; //
-
         h1 = h;
         w2 = w;
 
@@ -255,24 +251,13 @@ public class Bspline extends JPanel {
         }
     }
 
-    public void setStartPoint(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void setEndPoint(int x, int y) {
-        x2 = (x);
-        y2 = (y);
-    }
-
     class MyMouseListener extends MouseAdapter {
 
         public void mousePressed(MouseEvent e) {
-            setStartPoint(e.getX(), e.getY());
+          // do nothing
         }
 
         public void mouseDragged(MouseEvent e) {
-            // setEndPoint(e.getX(), e.getY());
             int y = h1 - e.getY();
 
             int x = e.getX();
@@ -320,12 +305,10 @@ public class Bspline extends JPanel {
                 // drawFun();
             }
             // drawSpline();
-            // repaint();
             repaint();
         }
 
         public void mouseReleased(MouseEvent e) {
-            setEndPoint(e.getX(), e.getY());
             repaint();
         }
     }
