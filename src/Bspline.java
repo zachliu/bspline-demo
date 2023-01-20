@@ -1,13 +1,12 @@
-// Interactive 2D B-spline, Zach Liu  2 Dec 2009
+// Interactive 2D B-spline, Zach Liu
+// Jan 20th, 2023
+
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 import java.util.StringTokenizer;
 
-public class Bspline extends java.applet.Applet
-        implements MouseMotionListener
-{
-    Image buffImage;
-    Graphics buffGraphics;
+public class Bspline extends JPanel {
 
     int n = 12, p = 3, m, Tmin, Tmax, w = 1350, h = 800, h1, w2;
     //double[] Px = { 0.2*w, 0.3*w, 0.7*w, 0.8*w };
@@ -20,24 +19,24 @@ public class Bspline extends java.applet.Applet
     double N[][];
     Color col[];
 
-    @Override
-    public void init() {
-        String s1 = getParameter("width");
-        String s2 = getParameter("height");
-        if ( s1 != null && s2 != null )
-        {
-            //w = Integer.parseInt( getParameter("width") );
-            //h = Integer.parseInt( getParameter("height") );
-        }
+    int x, y, x2, y2;
 
-        //w = 1240;
-        //h = 480;
-        this.setSize( w+100, h+100 );   // this changes the size of Applet Viewers
+    public static void main(String[] args) {
+        JFrame f = new JFrame("Draw Bspline");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setContentPane(new Bspline());
+        f.setSize(1350+100, 800+100);
+        f.setVisible(true);
+    }
+
+    Bspline() {
+        x = y = x2 = y2 = 0; //
 
         h1 = h;
         w2 = w;
 
-        String s = getParameter("N");
+        // String s = getParameter("N");
+        String s = null;
         if ( s != null )
         {
             StringTokenizer st = new StringTokenizer(s);
@@ -50,7 +49,8 @@ public class Bspline extends java.applet.Applet
         U = new double[m+p];        //
         col = new Color[w2];        //
         N = new double[m + 1][w2];  //
-        s = getParameter("pts");
+        // s = getParameter("pts");
+        s = null;
         if ( s != null )
         {
             StringTokenizer st = new StringTokenizer(s);
@@ -68,7 +68,8 @@ public class Bspline extends java.applet.Applet
                 Py[i] = h1*Py[i]/DY+h1/2;
             }
         }
-        s = getParameter( "knots" );
+        // s = getParameter( "knots" );
+        s = null;
         if ( s != null )
         {
             StringTokenizer st = new StringTokenizer( s );
@@ -86,16 +87,13 @@ public class Bspline extends java.applet.Applet
         {
             U[i] = 0 + (w2-20)*(U[i]-Umin) / dU;
         }
-        buffImage = createImage( w, h );
-        buffGraphics = buffImage.getGraphics();
-        setBackground( Color.white );
-        buffGraphics.clearRect( 0, 0, w, h );
-        addMouseMotionListener( this );
-        drawFun();
-        drawSpline();
+
+        MyMouseListener listener = new MyMouseListener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
     }
 
-    public void drawFun() {
+    public void drawFun(Graphics buffGraphics) {
         double step = (U[m-1]-U[0]) / (w2-0.99);
         //double step = 1;
         double u = U[0];
@@ -156,7 +154,7 @@ public class Bspline extends java.applet.Applet
         }
     }
 
-    public void drawSpline() {
+    public void drawSpline(Graphics buffGraphics) {
         int X,Y;
         int width = 3;
         boolean calMode = false;
@@ -255,73 +253,96 @@ public class Bspline extends java.applet.Applet
         }
     }
 
-    @Override
-    public void destroy() {
-        removeMouseMotionListener(this);
+    public void setStartPoint(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public void mouseMoved(MouseEvent e) {
-    }  //1.1 event handling
-
-    public void mouseDragged(MouseEvent e) {
-        int y = h1 - e.getY();
-
-        int x = e.getX();
-        if ( y < 0 )
-            y = 0;
-        if ( y > h1 )
-            y = h1;
-
-        int iMin = 0;
-        double Rmin = 1e10, r2, xi, yi;
-
-        if ( x < w2 )
-        {
-            if (x > w2+10)
-                return;
-            if (x < 0)
-                x = 0;
-            for (int i = 0; i < n; i++)
-            {
-                xi = (x - Px[i]);
-                yi = (y - Py[i]);
-                r2 = xi*xi + yi*yi;
-                if ( r2 < Rmin )
-                {
-                    iMin = i;
-                    Rmin = r2;
-                }
-            }
-            Px[iMin] = x;
-            Py[iMin] = y;
-        }
-        else
-        {
-            if ( x > w )
-                x = w;
-            for ( int i = 0; i < m; i++ )
-            {
-                if ( (r2 = Math.abs(U[i]-x) ) < Rmin )
-                {
-                    iMin = i;
-                    Rmin = r2;
-                }
-            }
-            U[iMin] = x;
-            drawFun();
-        }
-        drawSpline();
-        repaint();
+    public void setEndPoint(int x, int y) {
+        x2 = (x);
+        y2 = (y);
     }
 
-    @Override
+    public void drawPerfectRect(Graphics g) {
+        int px = Math.min(x,x2);
+        int py = Math.min(y,y2);
+        int pw=Math.abs(x-x2);
+        int ph=Math.abs(y-y2);
+        g.drawRect(px, py, pw, ph);
+    }
+
+    class MyMouseListener extends MouseAdapter {
+
+        public void mousePressed(MouseEvent e) {
+            setStartPoint(e.getX(), e.getY());
+        }
+
+        public void mouseDragged(MouseEvent e) {
+            // setEndPoint(e.getX(), e.getY());
+            int y = h1 - e.getY();
+
+            int x = e.getX();
+            if ( y < 0 )
+                y = 0;
+            if ( y > h1 )
+                y = h1;
+
+            int iMin = 0;
+            double Rmin = 1e10, r2, xi, yi;
+
+            if ( x < w2 )
+            {
+                if (x > w2+10)
+                    return;
+                if (x < 0)
+                    x = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    xi = (x - Px[i]);
+                    yi = (y - Py[i]);
+                    r2 = xi*xi + yi*yi;
+                    if ( r2 < Rmin )
+                    {
+                        iMin = i;
+                        Rmin = r2;
+                    }
+                }
+                Px[iMin] = x;
+                Py[iMin] = y;
+            }
+            else
+            {
+                if ( x > w )
+                    x = w;
+                for ( int i = 0; i < m; i++ )
+                {
+                    if ( (r2 = Math.abs(U[i]-x) ) < Rmin )
+                    {
+                        iMin = i;
+                        Rmin = r2;
+                    }
+                }
+                U[iMin] = x;
+                // drawFun();
+            }
+            // drawSpline();
+            // repaint();
+            repaint();
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            setEndPoint(e.getX(), e.getY());
+            repaint();
+        }
+    }
+
     public void paint(Graphics g) {
-        g.drawImage(buffImage, 0, 0, this);
-        // showStatus( " " + x +"  " + y);
+        // super.paintComponent(g);
+        super.paint(g);
+        g.setColor(Color.RED);
+        // drawPerfectRect(g);
+        drawFun(g);
+        drawSpline(g);
     }
 
-    @Override
-    public void update(Graphics g) {
-        paint(g);
-    }
 }
