@@ -15,8 +15,8 @@ public class Bspline extends JPanel {
     //double[] Py = { 0.2*h/2, 0.8*h/2, 0.8*h/2, 0.2*h/2 };
     int DX = 22;
     int DY = 20;
-    double[] Px = { 1, 5,   9.2, 13.3, 17, 21.3, 1, 5,   9.2, 13.3, 17, 21.3 };
-    double[] Py = { 1, 1.5, 4.3, -2.2, 2,  4,    1, 1.5, 4.3, -2.2, 2,  4    };
+    double[] Px = { 1, 5,   9.2, 13.3, 17, 21.3, 21.3, 17, 13.3, 9.2, 5,    1 };
+    double[] Py = { 1, 1.5, 4.3, -2.2, 2,  4,    2,    0,  -4.2, 2.3, -1.5, -1};
     double[] U;
     double N[][];
     Color col[];
@@ -207,7 +207,7 @@ public class Bspline extends JPanel {
             buffGraphics.setColor(col[b]);
             if ( (X < w2) && (Xold < w2) )
             {
-                //buffGraphics.drawLine( Xold,Yold, X,Y );
+                // buffGraphics.drawLine( Xold,Yold, X,Y );
                 /* the following for loop draws a line with variable thickness */
                 for (int s = 0, j; s < width; s++)
                 {
@@ -309,6 +309,10 @@ public class Bspline extends JPanel {
         }
 
         public void mouseReleased(MouseEvent e) {
+            int x = e.getX();
+            int y = h1 - e.getY();
+
+            System.out.printf("X = %d, Y = %d\n", x, y);
             repaint();
         }
     }
