@@ -263,14 +263,6 @@ public class Bspline extends JPanel {
         y2 = (y);
     }
 
-    public void drawPerfectRect(Graphics g) {
-        int px = Math.min(x,x2);
-        int py = Math.min(y,y2);
-        int pw=Math.abs(x-x2);
-        int ph=Math.abs(y-y2);
-        g.drawRect(px, py, pw, ph);
-    }
-
     class MyMouseListener extends MouseAdapter {
 
         public void mousePressed(MouseEvent e) {
@@ -340,7 +332,6 @@ public class Bspline extends JPanel {
         // super.paintComponent(g);
         super.paint(g);
         g.setColor(Color.RED);
-        // drawPerfectRect(g);
         drawFun(g);
         drawSpline(g);
     }
