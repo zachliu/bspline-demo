@@ -3,6 +3,8 @@ Interactive B-Spline demo. Just mouse drag the points and watch the beautiful cu
 
 Originally a Java applet (circa 2010), converted to a standalone Swing app in 2023.
 
+![Screenshot](screenshot.png)
+
 ## How to run
 ```
 $ make run
