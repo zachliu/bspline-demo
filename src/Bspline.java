@@ -22,7 +22,7 @@ public class Bspline extends JPanel {
     Color col[];
 
     public static void main(String[] args) {
-        JFrame f = new JFrame("Draw Bspline");
+        JFrame f = new JFrame("Interactive B-Spline Demo");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setContentPane(new Bspline());
         f.setSize(1350+100, 800+100);
@@ -167,7 +167,7 @@ public class Bspline extends JPanel {
             Y = h1-(int)Py[i];
             buffGraphics.drawRect( X-1, Y-1, 5, 5 );
             pns = Integer.toString(pn);
-            buffGraphics.setFont(new Font("Courier", Font.BOLD, 42));
+            buffGraphics.setFont(new Font("Courier", Font.BOLD, 24));
             buffGraphics.drawString(pns, X, Y-2);   // draw ctrl pts number
             pn = pn + 1;
         }

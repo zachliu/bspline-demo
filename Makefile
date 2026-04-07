@@ -1,3 +1,5 @@
 run:
-	javac src/Bspline.java
 	java src.Bspline
+
+compile:
+	javac src/Bspline.java
